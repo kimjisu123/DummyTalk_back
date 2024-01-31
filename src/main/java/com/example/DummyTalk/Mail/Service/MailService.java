@@ -71,10 +71,6 @@ public class MailService {
     }
     public String checkNum(int checkNum) {
 
-
-        log.info("checkNum===========>{}", checkNum);
-        log.info("number===========>{}", number);
-
         if(number == checkNum){
 
             return "인증에 성공하였습니다.";

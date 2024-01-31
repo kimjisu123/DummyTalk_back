@@ -55,9 +55,10 @@ public class TokenProvider {
     /* 1. 토큰(xxxxx.yyyyy.zzzzz) 생성 메소드 */
     public TokenDTO generateTokenDTO(User user) throws Exception {
 
-        String decryptJWT = aesUtil.decrypt(kmsClient, user.getUserSecretKey());
+        // secret key 복호화
+//        String decryptJWT = aesUtil.decrypt(kmsClient, user.getUserSecretKey());
 
-        this.key = Keys.hmacShaKeyFor(decryptJWT.getBytes());
+        this.key = Keys.hmacShaKeyFor(user.getUserSecretKey().getBytes());
 
         /* 1. 회원 아이디를 "sub"이라는 클레임으로 토큰으로 추가 */
         Claims claims = Jwts.claims().setSubject(String.valueOf(user.getUserId()));    // ex) { sub : memberId }

@@ -83,7 +83,7 @@ public class UserService  {
             String jwtKey = Base64.getEncoder().encodeToString(keyBytes);
 
             // AWS KMS(AES 256)를 활용한 암호화
-            String encrtptJWT = aesUtil.encrypt(kmsClient, jwtKey);
+//            String encrtptJWT = aesUtil.encrypt(kmsClient, jwtKey);
 
             // 서울시간으로 가져오기 위해 + 9시간
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -91,7 +91,7 @@ public class UserService  {
 
 
             userDTO.setCreateAt(plus9Hours);                                    // 유저에게 현재 시간 추가
-            userDTO.setUserSecretKey(encrtptJWT);
+            userDTO.setUserSecretKey(jwtKey);
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword())); // 비밀번호 인코딩
 
             // 닉네임을 입력하지 않았을 경우 이름으로 등록
@@ -133,7 +133,7 @@ public class UserService  {
             String jwtKey = Base64.getEncoder().encodeToString(keyBytes);
             
             // AWS KMS(AES 256)를 활용한 암호화
-            String encrtptJWT = aesUtil.encrypt(kmsClient, jwtKey);
+//            String encrtptJWT = aesUtil.encrypt(kmsClient, jwtKey);
 
             // 서울시간으로 가져오기 위해 + 9시간
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -143,7 +143,7 @@ public class UserService  {
                                         .nickname(getEmailUsername(email))
                                         .credential(credential.substring(0, 400))
                                         .createAt(plus9Hours)
-                                        .userSecretKey(encrtptJWT)
+                                        .userSecretKey(jwtKey)
                                         .userEmail(email)
                                         .nationalLanguage("kor_Hang")
                                         .build();

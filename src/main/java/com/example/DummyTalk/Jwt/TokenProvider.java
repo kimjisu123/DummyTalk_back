@@ -5,6 +5,7 @@ import com.example.DummyTalk.AES.AESUtil;
 import com.example.DummyTalk.Exception.TokenException;
 import com.example.DummyTalk.User.DTO.TokenDTO;
 import com.example.DummyTalk.User.Entity.User;
+import com.example.DummyTalk.User.Repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -28,17 +29,11 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class TokenProvider {
-
-
     private static final String BEARER_TYPE = "Bearer";   // Bearer 토큰 사용시 앞에 붙이는 prefix문자열
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 8; // 8시간으로 설정
     private static final String AUTHORITIES_KEY = "auth";
-
     private Key key;
     private final UserDetailsService userDetailsService;  // 사용자의 인증 및 권한 정보를 가져올수 있음
-
-    private final AESUtil aesUtil;
-    private final KmsClient kmsClient;
 
     public TokenProvider(UserDetailsService userDetailsService, AESUtil aesUtil, KmsClient kmsClient){
 
@@ -47,8 +42,6 @@ public class TokenProvider {
 //        byte[] keyBytest = Decoders.BASE64.decode(secretKey);      // Decoders.BASE64.decode() : 해당 메소드를 사용하여 secretKey를 디코딩
 //        this.key = Keys.hmacShaKeyFor(keyBytest);                  // hmacShaKeyFor() : SecretKey를 생성
         this.userDetailsService = userDetailsService;
-        this.aesUtil = aesUtil;
-        this.kmsClient = kmsClient;
     }
 
 
@@ -94,22 +87,24 @@ public class TokenProvider {
 
     /* 3. AccessToken으로 인증 객체 추출 */
     public Authentication getAuthentication(String token){
-
+        log.info("[TokenProvider] getAuthentication Start =============================== ");
         // 토큰에서 claim들을 추출
         Claims claims = parseClaims(token);
-
+        log.info("[TokenProvider] getAuthentication Start1 =============================== ");
         if(claims.get(AUTHORITIES_KEY) == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
-
+        log.info("[TokenProvider] getAuthentication Start2 =============================== ");
         // 클레임에서 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(",")) // ex: "ROLE_ADMIN"이랑 "ROLE_MEMBER"같은 문자열이 들어있는 문자열 배열
                         .map(role -> new SimpleGrantedAuthority(role))                 // 문자열 배열에 들어있는 권한 문자열 마다 SimpleGrantedAuthority 객체로 만듦
                         .collect(Collectors.toList());
 
-
+        log.info("[TokenProvider] getAuthentication Start3 =============================== ");
         UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUserId(token));
+
+        log.info("[TokenProvider] getAuthentication Start3 =============================== ");
 
         log.info("[TokenProvider] ===================== {}",  userDetails.getAuthorities());
 

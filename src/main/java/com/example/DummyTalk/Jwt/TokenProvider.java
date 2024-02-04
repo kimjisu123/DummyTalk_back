@@ -1,7 +1,6 @@
 package com.example.DummyTalk.Jwt;
 
 
-import com.example.DummyTalk.AES.AESUtil;
 import com.example.DummyTalk.Exception.TokenException;
 import com.example.DummyTalk.User.DTO.TokenDTO;
 import com.example.DummyTalk.User.Entity.User;
@@ -18,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.Authentication;
-import software.amazon.awssdk.services.kms.KmsClient;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -28,21 +26,24 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class TokenProvider {
     private static final String BEARER_TYPE = "Bearer";   // Bearer 토큰 사용시 앞에 붙이는 prefix문자열
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 8; // 8시간으로 설정
     private static final String AUTHORITIES_KEY = "auth";
-    private Key key;
     private final UserDetailsService userDetailsService;  // 사용자의 인증 및 권한 정보를 가져올수 있음
+    private final UserRepository userRepository;
+    private Key key;
 
-    public TokenProvider(UserDetailsService userDetailsService, AESUtil aesUtil, KmsClient kmsClient){
-
+//    public TokenProvider(UserDetailsService userDetailsService, UserRepository userRepository ){
+//
 //        String secretKey = "ejiSfPXxOMUuMXEU932MCy0adrbtkSlKeWcVZ0app6DpenURBmjaClhGTB4hR2dzzBhbMshXio46kUOtLs3tdw==";
-
 //        byte[] keyBytest = Decoders.BASE64.decode(secretKey);      // Decoders.BASE64.decode() : 해당 메소드를 사용하여 secretKey를 디코딩
+//
 //        this.key = Keys.hmacShaKeyFor(keyBytest);                  // hmacShaKeyFor() : SecretKey를 생성
-        this.userDetailsService = userDetailsService;
-    }
+//        this.userDetailsService = userDetailsService;
+//        this.userRepository = userRepository;
+//    }
 
 
     /* 1. 토큰(xxxxx.yyyyy.zzzzz) 생성 메소드 */
@@ -79,7 +80,7 @@ public class TokenProvider {
     /* 2. 토큰의 등록된 클레임의 subject에서 해당 회원의 아이디를 추출 */
     public String getUserId(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key).build()
+                .setSigningKey(key).build() // 시크릿 키 필요
                 .parseClaimsJws(token)
                 .getBody()          // payload의 Clamis 추출
                 .getSubject();      // Claim중에 등록 클레임에 해당하는 sub값 추출(회원 아이디)
@@ -117,8 +118,14 @@ public class TokenProvider {
     /* 4. 토큰 유효성 검사 */
     public boolean validateToken(String token){
 
+        log.info("Start1 token ==========> {}", token);
+        log.info("Start2 ==========> {}", getUserId(token));
+        log.info("Start3 ==========> {} ", Long.valueOf(getUserId(token)));
+
+        User user = userRepository.findByUserId(Long.valueOf(getUserId(token)));
+
         try{
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64.decode(user.getUserSecretKey()))).build().parseClaimsJws(token);
             return true;
         }catch(io.jsonwebtoken.security.SecurityException | MalformedJwtException e){
             log.info("[TokenProvider] 잘못된 JWT 서명입니다.");
@@ -136,6 +143,7 @@ public class TokenProvider {
     }
     /* 5. AccessToken에서 클레임 추출하는 메소드 */
     private Claims parseClaims(String token){
+
         try{
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         }catch (ExpiredJwtException e){

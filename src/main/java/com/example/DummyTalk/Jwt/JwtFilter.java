@@ -30,6 +30,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String jwt = resolveToken(request);  // accessToken
 
+        log.info("jwt 확인 =========> {}", jwt);
+
         /* 추출한 토큰의 유효성 검사 후 인증을 위해 Authentication 객체를 SecurityContextHolder에 담는다.*/
         if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
                 Authentication authentication = tokenProvider.getAuthentication(jwt);
@@ -43,8 +45,9 @@ public class JwtFilter extends OncePerRequestFilter {
     public static String resolveToken(HttpServletRequest request){
 
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
-            return bearerToken.substring(7); // 사용자가 보낸 토큰 값추출
+            return bearerToken.substring(6); // 사용자가 보낸 토큰 값추출
             // 토큰 생성 패턴이 Bearer ==byoj...
         }
         return null;

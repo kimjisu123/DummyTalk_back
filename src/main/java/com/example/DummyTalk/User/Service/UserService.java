@@ -59,9 +59,6 @@ public class UserService  {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final AwsS3Service awsS3UploadService;
-    private final AESUtil aesUtil;
-    private final Environment env;
-    private final KmsClient kmsClient;
 
     private final String BUCKET_DIR = "profile/";
 

@@ -3,6 +3,7 @@ package com.example.DummyTalk.Jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String jwt = resolveToken(request);  // accessToken
 
-        log.info("jwt 확인 =========> {}", jwt);
 
         /* 추출한 토큰의 유효성 검사 후 인증을 위해 Authentication 객체를 SecurityContextHolder에 담는다.*/
         if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
@@ -45,6 +45,10 @@ public class JwtFilter extends OncePerRequestFilter {
     public static String resolveToken(HttpServletRequest request){
 
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+
+        String pathInfo = request.getRequestURI();
+
+        log.info("pathInfo============>{}", pathInfo);
 
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
             return bearerToken.substring(6); // 사용자가 보낸 토큰 값추출

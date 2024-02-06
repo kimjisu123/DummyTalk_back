@@ -1,14 +1,5 @@
 package com.example.DummyTalk.User.DTO;
 
-import com.example.DummyTalk.User.Entity.UserServerCode;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class UserDTO implements UserDetails {
+public class UserDTO implements UserDetails{
 
     private Long userId;
 
@@ -50,15 +41,17 @@ public class UserDTO implements UserDetails {
 
     private List<UserServerCodeDto> userServerCodeList = new ArrayList<>();
 
+    private Collection<GrantedAuthority> authorities;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.authorities;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return name;
     }
 
     @Override

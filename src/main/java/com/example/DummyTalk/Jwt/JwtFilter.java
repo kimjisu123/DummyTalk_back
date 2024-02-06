@@ -30,11 +30,11 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String jwt = resolveToken(request);  // accessToken
-
+        Long userNo = getUserNo(request);
 
         /* 추출한 토큰의 유효성 검사 후 인증을 위해 Authentication 객체를 SecurityContextHolder에 담는다.*/
-        if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
-                Authentication authentication = tokenProvider.getAuthentication(jwt);
+        if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt, userNo)){
+                Authentication authentication = tokenProvider.getAuthentication(jwt, userNo);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
@@ -46,13 +46,22 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 
-        String pathInfo = request.getRequestURI();
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
+            return bearerToken.substring(8); // 사용자가 보낸 토큰 값추출
+            // 토큰 생성 패턴이 Bearer ==byoj...
+        }
 
-        log.info("pathInfo============>{}", pathInfo);
+        return null;
+    }
+
+    /* Request Header에 같이 전송한 userNo을 꺼내기 */
+    public static Long getUserNo(HttpServletRequest request){
+
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
-            return bearerToken.substring(6); // 사용자가 보낸 토큰 값추출
-            // 토큰 생성 패턴이 Bearer ==byoj...
+            return  Long.valueOf(bearerToken.substring(7, 8));
+            // 토큰 앞에 userNo을 같이 넘김
         }
         return null;
     }

@@ -1,9 +1,11 @@
 package com.example.DummyTalk.User.DTO;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +41,7 @@ public class UserDTO implements UserDetails{
 
     private String nationalLanguage;
 
-    private List<UserServerCodeDto> userServerCodeList = new ArrayList<>();
+//    private List<UserServerCodeDto> userServerCodeList = new ArrayList<>();
 
     private Collection<GrantedAuthority> authorities;
 
@@ -51,7 +53,7 @@ public class UserDTO implements UserDetails{
 
     @Override
     public String getUsername() {
-        return name;
+        return String.valueOf(this.userId);
     }
 
     @Override

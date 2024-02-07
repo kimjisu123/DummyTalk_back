@@ -22,6 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -100,7 +103,7 @@ public class UserController {
                 .body(new ResponseDTO(HttpStatus.OK, "친구 조회에 성공하셨습니다.", result));
     }
 
-    /* 친구 요청 */
+//    /* 친구 요청 */
 //    @PostMapping("/friend/{userId}")
 //    public ResponseEntity<ResponseDTO> saveFriend(@PathVariable String userId,
 //                                                  @RequestBody Map<String, String> email){
@@ -118,10 +121,17 @@ public class UserController {
 //                    .body(new ResponseDTO(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), null));
 //        }
 //    }
-
+    /* 친구 요청 */
     @MessageMapping("/friend/{userId}")
     public void saveFriend(@DestinationVariable String userId,
                                                   Map<String, String> message){
+
+        SecurityContext context = SecurityContextHolder.getContext();
+
+        // 현재 Authentication 객체를 가져옴
+        Authentication authentication = context.getAuthentication();
+
+        log.info("JWT 토큰의 인증 성공 유무를 확인겸 테스트 입니다~==============>{}", authentication.getName());
 
 
         try{

@@ -5,6 +5,7 @@ import com.example.DummyTalk.Exception.TokenException;
 import com.example.DummyTalk.User.DTO.TokenDTO;
 import com.example.DummyTalk.User.Entity.User;
 import com.example.DummyTalk.User.Repository.UserRepository;
+import com.example.DummyTalk.User.Service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -31,18 +32,10 @@ public class TokenProvider {
     private static final String BEARER_TYPE = "Bearer";   // Bearer 토큰 사용시 앞에 붙이는 prefix문자열
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 8; // 8시간으로 설정
     private static final String AUTHORITIES_KEY = "auth";
-    private final UserDetailsService userDetailsService;  // 사용자의 인증 및 권한 정보를 가져올수 있음
+    private final CustomUserDetailsService customUserDetailsService;  // 사용자의 인증 및 권한 정보를 가져올수 있음
     private final UserRepository userRepository;
     private Key key;
 
-//    public TokenProvider(UserDetailsService userDetailsService, UserRepository userRepository ){
-//        String secretKey = "ejiSfPXxOMUuMXEU932MCy0adrbtkSlKeWcVZ0app6DpenURBmjaClhGTB4hR2dzzBhbMshXio46kUOtLs3tdw==";
-//        byte[] keyBytest = Decoders.BASE64.decode(secretKey);      // Decoders.BASE64.decode() : 해당 메소드를 사용하여 secretKey를 디코딩
-//
-//        this.key = Keys.hmacShaKeyFor(keyBytest);                  // hmacShaKeyFor() : SecretKey를 생성
-//        this.userDetailsService = userDetailsService;
-//        this.userRepository = userRepository;
-//    }
 
     /* 1. 토큰(xxxxx.yyyyy.zzzzz) 생성 메소드 */
     public TokenDTO generateTokenDTO(User user) throws Exception {
@@ -55,7 +48,7 @@ public class TokenProvider {
         /* 1. 회원 아이디를 "sub"이라는 클레임으로 토큰으로 추가 */
         Claims claims = Jwts.claims().setSubject(String.valueOf(user.getUserId()));    // ex) { sub : memberId }
 
-        claims.put(AUTHORITIES_KEY, "auth");
+        claims.put(AUTHORITIES_KEY, "role");
         claims.put("nickname", user.getNickname());
         claims.put("userName", user.getName());
         claims.put("national_language", user.getNationalLanguage());
@@ -98,12 +91,17 @@ public class TokenProvider {
 //                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))    // ex: "ROLE_ADMIN"이랑 "ROLE_MEMBER"같은 문자열이 들어있는 문자열 배열
 //                        .map(role -> new SimpleGrantedAuthority(role))                    // 문자열 배열에 들어있는 권한 문자열 마다 SimpleGrantedAuthority 객체로 만듦
 //                        .collect(Collectors.toList());
+//
+//        log.info("[TokenProvider] authorities {} ", authorities);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.getSubject()); // loadUserByUsername 사용자의 이름을 기반으로 사용자의 정보를 가져옴
 
         log.info("[TokenProvider] ===================== {}",  userDetails.getAuthorities());
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        // UsernamePasswordAuthenticationToken : 사용자의 신원 정보와 권한을 저장하고 전달하는데 사용
+        // userDetails :  사용자의 이름, 비밀번호, 권한을 포함한 사용자의 세부 정보를 나타내는 객체를 의미
+        // "" :
     }
 
     /* 4. 토큰 유효성 검사 */

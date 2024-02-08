@@ -3,6 +3,7 @@ package com.example.DummyTalk.User.Service;
 import com.example.DummyTalk.User.DTO.UserDTO;
 import com.example.DummyTalk.User.Entity.User;
 import com.example.DummyTalk.User.Repository.UserRepository;
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

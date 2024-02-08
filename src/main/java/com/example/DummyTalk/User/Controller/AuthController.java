@@ -1,7 +1,6 @@
 package com.example.DummyTalk.User.Controller;
 
 import com.example.DummyTalk.Common.DTO.ResponseDTO;
-import com.example.DummyTalk.Jwt.TokenProvider;
 import com.example.DummyTalk.User.DTO.TokenDTO;
 import com.example.DummyTalk.User.DTO.UserDTO;
 import com.example.DummyTalk.User.Service.AuthService;
@@ -28,5 +27,4 @@ public class AuthController {
                 status(HttpStatus.OK)
                 .body(new ResponseDTO( HttpStatus.OK, "로그인에 성공하셨습니다.", result));
     }
-
 }

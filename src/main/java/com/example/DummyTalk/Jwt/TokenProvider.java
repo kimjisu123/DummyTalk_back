@@ -99,9 +99,15 @@ public class TokenProvider {
         log.info("[TokenProvider] ===================== {}",  userDetails.getAuthorities());
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        /* new UsernamePasswordAuthenticationToken
+        * principal : 주로 사용자의 신원 정보를 나타내며, 여기에서는 'userDetails'가 해당 역할을 한다. 'principal'은 사용자의 주요 식별 정보를 나타냅니다.
+        * credentials : 사용자의 비밀번호나 인증 토큰을 나타내는데 사용이 되며 보통 userDetails 내부에 포함이 되어있거나 사용하지 않는 경우가 있다.
+        * authorities : 사용자의 권한 목록을 나타냅니다. 주로 userDetails.getAuthorities()를 사용하여 사용자의 권한 정보를 가져옵니다.
+        *  */
         // UsernamePasswordAuthenticationToken : 사용자의 신원 정보와 권한을 저장하고 전달하는데 사용
         // userDetails :  사용자의 이름, 비밀번호, 권한을 포함한 사용자의 세부 정보를 나타내는 객체를 의미
-        // "" :
+        // "" : 두 번째 매개변수는 사용자의 비밀번호를 나타냅니다. 비밀번호가 이미 userDetails 객체에 포함이 되어 있거나 인증시에 사용을 하지 않기도 한다.
+        // userDetails.getAuthorities() : 마지막 매개변수는 사용자의 권한을 나타냅니다. 여기서도 userDetails 객체에서 권한 정보를 가져와 설정합니다.
     }
 
     /* 4. 토큰 유효성 검사 */

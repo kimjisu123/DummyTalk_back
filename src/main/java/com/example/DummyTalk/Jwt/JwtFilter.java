@@ -35,9 +35,11 @@ public class JwtFilter extends OncePerRequestFilter {
         /* 추출한 토큰의 유효성 검사 후 인증을 위해 Authentication 객체를 SecurityContextHolder에 담는다.*/
         if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt, userNo)){
             Authentication authentication = tokenProvider.getAuthentication(jwt, userNo);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);  // Spring Security에서 현재 사용자의 Authentication 객체 가져오기
+            // SecurityContextHolder : Spring Security에서는 현재 사용자와 관련된 SecurityContext를 제공. SecurityContextHolder는 이러한 SecurityContext를 관리하는 역할
+            // getContext() : SecurityContextHolder의 정적 메소드로 현재 실행중인 스레드의 SecurityContext를 반환
+            // setAuthentication(authentication) : 'SecurityContext'에 현재 사용자의 인증 객체를 설정합니다.
         }
-
         filterChain.doFilter(request, response); // 다음 filterchain 진행
     }
 

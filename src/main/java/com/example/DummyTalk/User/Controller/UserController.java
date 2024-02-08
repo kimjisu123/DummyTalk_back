@@ -124,7 +124,7 @@ public class UserController {
     /* 친구 요청 */
     @MessageMapping("/friend/{userId}")
     public void saveFriend(@DestinationVariable String userId,
-                                                  Map<String, String> message){
+                            Map<String, String> message){
 
         SecurityContext context = SecurityContextHolder.getContext();
 

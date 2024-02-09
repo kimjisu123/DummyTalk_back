@@ -1,9 +1,7 @@
 package com.example.DummyTalk.Jwt;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +33,15 @@ public class JwtFilter extends OncePerRequestFilter {
         /* 추출한 토큰의 유효성 검사 후 인증을 위해 Authentication 객체를 SecurityContextHolder에 담는다.*/
         if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt, userNo)){
             Authentication authentication = tokenProvider.getAuthentication(jwt, userNo);
-            SecurityContextHolder.getContext().setAuthentication(authentication);  // Spring Security에서 현재 사용자의 Authentication 객체 가져오기
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Spring Security에서 현재 사용자의 Authentication 객체 가져오기 (보통 세션에서 사용)
             // SecurityContextHolder : Spring Security에서는 현재 사용자와 관련된 SecurityContext를 제공. SecurityContextHolder는 이러한 SecurityContext를 관리하는 역할
             // getContext() : SecurityContextHolder의 정적 메소드로 현재 실행중인 스레드의 SecurityContext를 반환
             // setAuthentication(authentication) : 'SecurityContext'에 현재 사용자의 인증 객체를 설정합니다.
         }
         filterChain.doFilter(request, response); // 다음 filterchain 진행
     }
+
 
     /* Request Header에서 토큰 정보 꺼내기(여기서 위에서 선언한 두개의 static변수를 사용할꺼)*/
     public static String resolveToken(HttpServletRequest request){

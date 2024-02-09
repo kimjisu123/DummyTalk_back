@@ -89,7 +89,7 @@ public class TokenProvider {
         // 클레임에서 권한 정보 가져오기
 //        Collection<? extends GrantedAuthority> authorities =
 //                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))    // ex: "ROLE_ADMIN"이랑 "ROLE_MEMBER"같은 문자열이 들어있는 문자열 배열
-//                        .map(role -> new SimpleGrantedAuthority(role))                    // 문자열 배열에 들어있는 권한 문자열 마다 SimpleGrantedAuthority 객체로 만듦
+//                        .map(role -> new SimpleGrantedAuthority(role))              // 문자열 배열에 들어있는 권한 문자열 마다 SimpleGrantedAuthority 객체로 만듦
 //                        .collect(Collectors.toList());
 //
 //        log.info("[TokenProvider] authorities {} ", authorities);
@@ -99,7 +99,9 @@ public class TokenProvider {
         log.info("[TokenProvider] ===================== {}",  userDetails.getAuthorities());
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        /* new UsernamePasswordAuthenticationToken
+        // UsernamePasswordAuthenticationToken는 Authentication를 생성해주는 클래스
+        // Authentication 객체로 반드시 userDetails를 상속한 객체를 넣지 않아도 된다.
+        /* new UsernamePasswordAuthenticationToken (Authentication)
         * principal : 주로 사용자의 신원 정보를 나타내며, 여기에서는 'userDetails'가 해당 역할을 한다. 'principal'은 사용자의 주요 식별 정보를 나타냅니다.
         * credentials : 사용자의 비밀번호나 인증 토큰을 나타내는데 사용이 되며 보통 userDetails 내부에 포함이 되어있거나 사용하지 않는 경우가 있다.
         * authorities : 사용자의 권한 목록을 나타냅니다. 주로 userDetails.getAuthorities()를 사용하여 사용자의 권한 정보를 가져옵니다.

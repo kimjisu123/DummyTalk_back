@@ -36,9 +36,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
             /* 추후 다른 필터, 서블릿, 컨트롤러 등등에서 인증 객체를 사용하기 위해 SecurityContext에 값을 담음 */
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            // SecurityContextHolder : Spring Security에서는 현재 사용자와 관련된 SecurityContext를 제공.
-            // 현재 스레드(스레드 로컬(thread-local) 기반의 저장소)의 보안 컨텍스트를 저장.
-            // getContext() : SecurityContextHolder의 정적 메소드로 현재 실행중인 스레드의 SecurityContext를 반환
+            // 추후 다른 필터, 서블릿, 컨트롤러 등등에서 인증 객체를 사용하기 위해 SecurityContext에 값을 담음
+            // SecurityContextHolder : Spring Security에서는 현재 사용자와 관련된 SecurityContext를 제공, 현재 스레드의 보안 컨텍스트를 저장.
+            // getContext() : SecurityContextHolder의 정적 메소드로 현재 실행중인 *스레드의 SecurityContext를 반환
             // setAuthentication(authentication) : 'SecurityContext'에 현재 사용자의 인증 객체를 설정합니다.
         }
         filterChain.doFilter(request, response); // 다음 filterchain 진행

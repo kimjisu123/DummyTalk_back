@@ -96,6 +96,8 @@ public class TokenProvider {
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.getSubject()); // loadUserByUsername 사용자의 이름을 기반으로 사용자의 정보를 가져옴
 
+        log.info("[TokenProvider] ===================== {}",  userDetails.getAuthorities());
+
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
         // UsernamePasswordAuthenticationToken는 Authentication를 생성해주는 클래스
         // Authentication 객체로 반드시 userDetails를 상속한 객체를 넣지 않아도 된다.

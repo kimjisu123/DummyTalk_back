@@ -63,9 +63,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeRequests) ->
                         authorizeRequests
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-//                                .requestMatchers("/server/**", "/channel/**", "/chat/**").access(USER,ADMIN)
                                 .requestMatchers("/", "/login/**", "/websocket", "/app/**","/googleLogin/**").permitAll()   // index와 login페이지만 허용
-                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                 ).exceptionHandling(exception ->
                         exception
                                 /* 기본 시큐리티 설정에서 JWT 토큰과 관련된 유효성과 권한 체크용 설정*/

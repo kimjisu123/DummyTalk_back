@@ -63,6 +63,9 @@ java {
 
         implementation 'commons-io:commons-io:2.15.1'
 
+        /* Redis */
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
         /* AWS */
         implementation(platform("software.amazon.awssdk:bom:2.21.20"))
         implementation("software.amazon.awssdk:s3")

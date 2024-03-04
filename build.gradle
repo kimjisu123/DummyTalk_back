@@ -24,6 +24,7 @@ java {
     }
 
     dependencies {
+
         implementation 'io.livekit:livekit-server:0.5.6'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
         implementation 'org.springframework.boot:spring-boot-starter-security'

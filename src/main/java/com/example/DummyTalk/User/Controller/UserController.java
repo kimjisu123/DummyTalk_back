@@ -126,13 +126,6 @@ public class UserController {
     public void saveFriend(@DestinationVariable String userId,
                             Map<String, String> message){
 
-        SecurityContext context = SecurityContextHolder.getContext();
-
-        // 현재 Authentication 객체를 가져옴
-        Authentication authentication = context.getAuthentication();
-
-        log.info("JWT 토큰의 인증 성공 유무를 확인겸 테스트 입니다~==============>{}", authentication.getName());
-
 
         try{
             FriendDTO result = userService.saveFriend(userId, message);

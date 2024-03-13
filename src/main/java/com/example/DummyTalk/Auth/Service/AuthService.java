@@ -1,4 +1,4 @@
-package com.example.DummyTalk.User.Service;
+package com.example.DummyTalk.Auth.Service;
 
 import com.example.DummyTalk.Jwt.TokenProvider;
 import com.example.DummyTalk.User.DTO.TokenDTO;

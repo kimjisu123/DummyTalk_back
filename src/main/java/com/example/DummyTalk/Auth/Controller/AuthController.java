@@ -1,9 +1,9 @@
-package com.example.DummyTalk.User.Controller;
+package com.example.DummyTalk.Auth.Controller;
 
+import com.example.DummyTalk.Auth.Service.AuthService;
 import com.example.DummyTalk.Common.DTO.ResponseDTO;
 import com.example.DummyTalk.User.DTO.TokenDTO;
 import com.example.DummyTalk.User.DTO.UserDTO;
-import com.example.DummyTalk.User.Service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

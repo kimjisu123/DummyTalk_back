@@ -1,6 +1,8 @@
 package com.example.DummyTalk.User.Service;
 
 import com.example.DummyTalk.AES.AESUtil;
+import com.example.DummyTalk.Auth.Entity.RefreshToken;
+import com.example.DummyTalk.Auth.Repository.RefreshTokenRepository;
 import com.example.DummyTalk.Aws.AwsS3Service;
 import com.example.DummyTalk.Chat.Channel.Dto.ImageDto;
 import com.example.DummyTalk.Jwt.TokenProvider;
@@ -38,11 +40,10 @@ import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.*;
+
 
 @Service
 @Slf4j
@@ -157,6 +158,17 @@ public class UserService  {
         }
     }
 
+    public TokenDTO refreshToken(Map<String, String>  refreshToken) {
+
+        // 리프레시토큰으로 redis 조회
+
+        // if 있을 경우 token 발급
+
+        // 없을 경우 null return
+
+        return null;
+    }
+
     public UserDTO  findByUser(String userId){
 
         User user = userRepository.findById(Long.parseLong(userId)).get();
@@ -164,7 +176,7 @@ public class UserService  {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    public FriendDTO  saveFriend(String userId, Map<String,String> email){
+    public FriendDTO saveFriend(String userId, Map<String,String> email){
 
 
         Long LuserId = Long.parseLong(userId);
@@ -223,8 +235,6 @@ public class UserService  {
     public List<UserDTO> findByFriend(int userId) {
 
         List<User> userList = userRepository.findByFriends(userId);
-
-
 
         List<UserDTO> result = userList.stream().map(User -> modelMapper.map(User, UserDTO.class)).collect(Collectors.toList());
 

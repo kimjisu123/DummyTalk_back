@@ -1,6 +1,8 @@
 package com.example.DummyTalk.Jwt;
 
 
+import com.example.DummyTalk.Auth.Entity.RefreshToken;
+import com.example.DummyTalk.Auth.Repository.RefreshTokenRepository;
 import com.example.DummyTalk.Exception.TokenException;
 import com.example.DummyTalk.User.DTO.TokenDTO;
 import com.example.DummyTalk.User.Entity.User;
@@ -23,6 +25,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,10 +33,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TokenProvider {
     private static final String BEARER_TYPE = "Bearer";   // Bearer 토큰 사용시 앞에 붙이는 prefix문자열
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 8; // 8시간으로 설정
+//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 8; // 8시간으로 설정
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60; // 8시간으로 설정
     private static final String AUTHORITIES_KEY = "auth";
     private final CustomUserDetailsService customUserDetailsService;  // 사용자의 인증 및 권한 정보를 가져올수 있음
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private Key key;
 
 
@@ -45,6 +50,12 @@ public class TokenProvider {
 
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(user.getUserSecretKey()));
 
+        String refreshToken = UUID.randomUUID().toString();
+
+        RefreshToken redis = new RefreshToken(refreshToken, user.getUserId());
+
+        refreshTokenRepository.save(redis);
+
         /* 1. 회원 아이디를 "sub"이라는 클레임으로 토큰으로 추가 */
         Claims claims = Jwts.claims().setSubject(String.valueOf(user.getUserId()));    // ex) { sub : memberId }
 
@@ -52,6 +63,7 @@ public class TokenProvider {
         claims.put("nickname", user.getNickname());
         claims.put("userName", user.getName());
         claims.put("national_language", user.getNationalLanguage());
+        claims.put("refreshToken", refreshToken);
 
         long now = System.currentTimeMillis();  // 현재시간을 밀리세컨드단위로 가져옴
 
@@ -93,6 +105,7 @@ public class TokenProvider {
 //                        .collect(Collectors.toList());
 //
 //        log.info("[TokenProvider] authorities {} ", authorities);
+
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.getSubject()); // loadUserByUsername 사용자의 이름을 기반으로 사용자의 정보를 가져옴
 

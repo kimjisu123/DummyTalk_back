@@ -80,6 +80,17 @@ public class UserController {
                 .body(new ResponseDTO(HttpStatus.OK, "구글 로그인에 성공하셨습니다.", result));
     }
 
+    /* RTK로 인한 ATK 재발급 */
+    @PostMapping("/refreshToken")
+    public ResponseEntity<ResponseDTO> RefreshToken(@RequestBody Map<String, String> userRTK){
+
+        TokenDTO result = userService.refreshToken(userRTK);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseDTO( HttpStatus.OK, "리프레시 토큰 발급에 성공하였습니다.", result));
+    }
+
     /* 유저 조회 코드 */
     @GetMapping("/user/{userId}")
     public ResponseEntity<ResponseDTO> findByUser(@PathVariable String userId){
@@ -145,6 +156,13 @@ public class UserController {
     /* 친구 요청 조회 */
     @GetMapping("friendRequest/{userId}")
     public ResponseEntity<ResponseDTO> findFriendRequest(@PathVariable int userId){
+
+        SecurityContext context = SecurityContextHolder.getContext();
+
+        // 현재 Authentication 객체를 가져옴
+        Authentication authentication = context.getAuthentication();
+
+        log.info("JWT 토큰의 인증 성공 유무를 확인겸 테스트 입니다~==============>{}", authentication.getName());
 
 
         List<UserDTO> result = userService.findByFriendRequest(userId);

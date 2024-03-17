@@ -65,7 +65,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 //                                .requestMatchers("/server/**", "/channel/**", "/chat/**").access(USER,ADMIN)
                                 .requestMatchers("/", "/login/**", "/websocket", "/app/**","/googleLogin/**").permitAll()   // index와 login페이지만 허용
-                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                 ).exceptionHandling(exception ->
                         exception
                                 /* 기본 시큐리티 설정에서 JWT 토큰과 관련된 유효성과 권한 체크용 설정*/
@@ -104,7 +104,7 @@ public class SecurityConfig {
         // websocket 통신을 위한 설정
         configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Content-type"    // setAllowedHeaders() : 허용되는 HTTP 헤더의 목록을 지정
                 , "Access-Control-Allow-Headers", "Authorization", "Access-Control-Allow-Credentials"
-                , "X-Requested-With"));
+                , "X-Requested-With", "RefreshToken"));
         configuration.setExposedHeaders(List.of("Access-Control-Allow-Origin"));                   // setExposedHeaders() : 서버에서 클라이언트로 응답할 때 노출할 수 있는 헤더의 목록을 지정
         configuration.addAllowedMethod("*");                                                           // addAllowedMethod() : Get/Post/Delete.. 등 요청의 모든 방식을 허용
         configuration.setAllowCredentials(true);

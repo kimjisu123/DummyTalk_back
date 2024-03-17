@@ -22,7 +22,6 @@ public class AuthService {
 
     private final TokenProvider tokenProvider;
 
-    private final ModelMapper modelMapper;
 
     public TokenDTO login(UserDTO userDTO) throws Exception {
 

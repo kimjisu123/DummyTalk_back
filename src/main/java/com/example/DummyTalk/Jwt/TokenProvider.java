@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TokenProvider {
     private static final String BEARER_TYPE = "Bearer";   // Bearer 토큰 사용시 앞에 붙이는 prefix문자열
-//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 8; // 8시간으로 설정
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60; // 8시간으로 설정
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 8; // 8시간으로 설정
+//    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60; // 8시간으로 설정
     private static final String AUTHORITIES_KEY = "auth";
     private final CustomUserDetailsService customUserDetailsService;  // 사용자의 인증 및 권한 정보를 가져올수 있음
     private final UserRepository userRepository;

@@ -25,6 +25,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -82,7 +83,7 @@ public class UserController {
 
     /* RTK로 인한 ATK 재발급 */
     @PostMapping("/refreshToken")
-    public ResponseEntity<ResponseDTO> RefreshToken(@RequestBody Map<String, String> userRTK){
+    public ResponseEntity<ResponseDTO> RefreshToken(@RequestBody Map<String, String> userRTK) throws Exception {
 
         TokenDTO result = userService.refreshToken(userRTK);
 
@@ -160,9 +161,9 @@ public class UserController {
         SecurityContext context = SecurityContextHolder.getContext();
 
         // 현재 Authentication 객체를 가져옴
-        Authentication authentication = context.getAuthentication();
+        UserDTO userDTO = (UserDTO) context.getAuthentication().getPrincipal();
 
-        log.info("JWT 토큰의 인증 성공 유무를 확인겸 테스트 입니다~==============>{}", authentication.getName());
+        log.info("JWT 토큰의 인증 성공 유무를 확인겸 테스트 입니다~==============>{}",  userDTO.getUserId());
 
 
         List<UserDTO> result = userService.findByFriendRequest(userId);

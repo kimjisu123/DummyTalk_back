@@ -53,7 +53,7 @@ public class UserDTO implements UserDetails{
 
     @Override
     public String getUsername() {
-        return String.valueOf(this.userId);
+        return String.valueOf(this.name);
     }
 
     @Override

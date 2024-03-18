@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +62,7 @@ public class UserService  {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final AwsS3Service awsS3UploadService;
+    private final  RefreshTokenRepository refreshTokenRepository;
 
     private final String BUCKET_DIR = "profile/";
 
@@ -158,15 +161,22 @@ public class UserService  {
         }
     }
 
-    public TokenDTO refreshToken(Map<String, String>  refreshToken) {
+    public TokenDTO refreshToken(Map<String, String>  refreshToken) throws Exception {
 
         // 리프레시토큰으로 redis 조회
+        RefreshToken refreshToken1 = refreshTokenRepository.findById(refreshToken.get("refreshToken")).get();
 
+        log.info("refreshToken1 ===>{}", refreshToken1.getUserId());
         // if 있을 경우 token 발급
+        if(refreshToken1 != null){
 
+            User user = userRepository.findByUserId(refreshToken1.getUserId());
+
+            return tokenProvider.generateTokenDTO(user);
+        } else{
+            return null;
+        }
         // 없을 경우 null return
-
-        return null;
     }
 
     public UserDTO  findByUser(String userId){
